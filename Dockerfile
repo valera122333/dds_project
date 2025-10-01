@@ -20,4 +20,5 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Указываем команду Gunicorn через $PORT
-CMD ["gunicorn", "dds_project.wsgi:application", "--bind", "0.0.0.0:$PORT"]
+CMD gunicorn dds_project.wsgi:application --bind 0.0.0.0:$PORT
+
