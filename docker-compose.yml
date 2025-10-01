@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    command: gunicorn dds_project.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./src:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DB_NAME: dds_db
+      DB_USER: dds_user
+      DB_PASSWORD: dds_pass
+      DB_HOST: db
+      DB_PORT: 5432
+      DJANGO_SUPERUSER_USERNAME: admin
+      DJANGO_SUPERUSER_PASSWORD: admin
+      DJANGO_SUPERUSER_EMAIL: admin@.com
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: dds_db
+      POSTGRES_USER: dds_user
+      POSTGRES_PASSWORD: dds_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:

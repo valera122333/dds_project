@@ -1,0 +1,11 @@
+{% extends "dds/base.html" %}
+{% block content %}
+<h2>Справочники</h2>
+
+<div class="list-group">
+    <a href="{% url 'status_list' %}" class="list-group-item list-group-item-action">Статусы</a>
+    <a href="{% url 'type_list' %}" class="list-group-item list-group-item-action">Типы операций</a>
+    <a href="{% url 'category_list' %}" class="list-group-item list-group-item-action">Категории</a>
+    <a href="{% url 'subcategory_list' %}" class="list-group-item list-group-item-action">Подкатегории</a>
+</div>
+{% endblock %}

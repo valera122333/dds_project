@@ -1,0 +1,72 @@
+{% extends "dds/base.html" %}
+
+{% block content %}
+<h2>Записи ДДС</h2>
+
+<form method="get" class="row g-3 mb-3">
+    <div class="col-md-2">
+        {{ filter_form.start_date.label_tag }}
+        {{ filter_form.start_date }}
+    </div>
+    <div class="col-md-2">
+        {{ filter_form.end_date.label_tag }}
+        {{ filter_form.end_date }}
+    </div>
+    <div class="col-md-2">
+        {{ filter_form.status.label_tag }}
+        {{ filter_form.status }}
+    </div>
+    <div class="col-md-2">
+        {{ filter_form.type.label_tag }}
+        {{ filter_form.type }}
+    </div>
+    <div class="col-md-2">
+        {{ filter_form.category.label_tag }}
+        {{ filter_form.category }}
+    </div>
+    <div class="col-md-2">
+        {{ filter_form.subcategory.label_tag }}
+        {{ filter_form.subcategory }}
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Фильтровать</button>
+        <a href="{% url 'record_list' %}" class="btn btn-secondary">Сбросить</a>
+    </div>
+</form>
+
+<a class="btn btn-success mb-3" href="{% url 'record_create' %}">Добавить запись</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Статус</th>
+            <th>Тип</th>
+            <th>Категория</th>
+            <th>Подкатегория</th>
+            <th>Сумма</th>
+            <th>Комментарий</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for record in records %}
+        <tr>
+            <td>{{ record.created_at }}</td>
+            <td>{{ record.status }}</td>
+            <td>{{ record.type }}</td>
+            <td>{{ record.category }}</td>
+            <td>{{ record.subcategory }}</td>
+            <td>{{ record.amount }}</td>
+            <td>{{ record.comment }}</td>
+            <td>
+                <a href="{% url 'record_edit' record.id %}" class="btn btn-primary btn-sm">✏️</a>
+                <a href="{% url 'record_delete' record.id %}" class="btn btn-danger btn-sm">🗑️</a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="8" class="text-center">Нет записей</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

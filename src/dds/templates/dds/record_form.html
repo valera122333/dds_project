@@ -1,0 +1,134 @@
+{% extends "dds/base.html" %}
+
+{% block content %}
+<h2>{% if form.instance.pk %}Редактировать{% else %}Добавить{% endif %} запись</h2>
+
+{% if form.errors %}
+<div class="alert alert-danger">
+    <ul>
+    {% for field in form %}
+        {% for error in field.errors %}
+            <li>{{ field.label }}: {{ error }}</li>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        {{ form.created_at.label_tag }}
+        {{ form.created_at }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.status.label_tag }}
+        {{ form.status }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.type.label_tag }}
+        {{ form.type }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.category.label_tag }}
+        {{ form.category }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.subcategory.label_tag }}
+        {{ form.subcategory }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.amount.label_tag }}
+        {{ form.amount }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.comment.label_tag }}
+        {{ form.comment }}
+    </div>
+
+    <button type="submit" class="btn btn-success">Сохранить</button>
+    <a href="{% url 'record_list' %}" class="btn btn-secondary">Отмена</a>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    var typeSelect = $('#id_type');
+    var categorySelect = $('#id_category');
+    var subcategorySelect = $('#id_subcategory');
+
+    function loadCategories(typeId, selectedCategoryId=null) {
+        if(!typeId){
+            categorySelect.html('<option value="">---------</option>');
+            subcategorySelect.html('<option value="">---------</option>');
+            return;
+        }
+        $.ajax({
+            url: "{% url 'ajax_load_categories' %}",
+            data: {'type_id': typeId},
+            success: function(data) {
+                categorySelect.html('<option value="">---------</option>');
+                $.each(data, function(index, category) {
+                    var selected = selectedCategoryId == category.id ? 'selected' : '';
+                    categorySelect.append('<option value="' + category.id + '" '+selected+'>' + category.name + '</option>');
+                });
+                categorySelect.trigger('change');
+            }
+        });
+    }
+
+    function loadSubcategories(categoryId, selectedSubcategoryId=null) {
+        if(!categoryId){
+            subcategorySelect.html('<option value="">---------</option>');
+            return;
+        }
+        $.ajax({
+            url: "{% url 'ajax_load_subcategories' %}",
+            data: {'category_id': categoryId},
+            success: function(data) {
+                subcategorySelect.html('<option value="">---------</option>');
+                $.each(data, function(index, subcategory) {
+                    var selected = selectedSubcategoryId == subcategory.id ? 'selected' : '';
+                    subcategorySelect.append('<option value="' + subcategory.id + '" '+selected+'>' + subcategory.name + '</option>');
+                });
+            }
+        });
+    }
+
+    // --- инициализация при загрузке формы ---
+    var initialType = typeSelect.val();
+    var initialCategory = categorySelect.val();
+    var initialSubcategory = subcategorySelect.val();
+    if(initialType){
+        loadCategories(initialType, initialCategory);
+        if(initialCategory){
+            loadSubcategories(initialCategory, initialSubcategory);
+        }
+    }
+
+    // --- события изменения ---
+    typeSelect.change(function(){ loadCategories($(this).val()); });
+    categorySelect.change(function(){ loadSubcategories($(this).val()); });
+});
+</script>
+<script>
+$(function(){
+    var $created = $('#id_created_at');
+    if($created.length && !$created.val()){
+        var today = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+        $created.val(today);
+    }
+});
+</script>
+
+{% endblock %}

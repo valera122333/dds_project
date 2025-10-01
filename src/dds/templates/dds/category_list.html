@@ -1,0 +1,27 @@
+{% extends "dds/base.html" %}
+{% block content %}
+<h2>Категории</h2>
+<a href="{% url 'category_create' %}" class="btn btn-success mb-3">➕ Добавить</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr><th>ID</th><th>Название</th><th>Тип</th><th>Действия</th></tr>
+    </thead>
+    <tbody>
+    {% for item in items %}
+        <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.type.name }}</td>
+            <td>
+                <a href="{% url 'category_edit' item.id %}" class="btn btn-primary btn-sm">✏️</a>
+                <form method="post" action="{% url 'category_delete' item.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Удалить?');">🗑️</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
